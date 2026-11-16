@@ -156,6 +156,7 @@ kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;paddi
   const view=document.getElementById("view");
   const b64=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
   let k=null;const m=location.hash.match(/^#k=([A-Za-z0-9_-]{40,})/);
+  addEventListener("hashchange",()=>{if(/^#k=/.test(location.hash))location.reload()});
   if(m){k=m[1];try{localStorage.setItem("avb.key",k)}catch(_){}history.replaceState(null,"",location.pathname+"#/")}
   else{try{k=localStorage.getItem("avb.key")}catch(_){}}
   const lock=t=>{document.getElementById("side").innerHTML="";view.innerHTML='<div class="lock"><h1>Нужна ссылка с ключом</h1><p>'+t+'</p></div>'};
