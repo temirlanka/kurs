@@ -167,7 +167,10 @@ kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;paddi
   try{
     const key=await crypto.subtle.importKey("raw",b64(k),"AES-GCM",false,["decrypt"]);
     window.__decrypt=buf=>crypto.subtle.decrypt({name:"AES-GCM",iv:new Uint8Array(buf,0,12)},key,new Uint8Array(buf,12));
-    const r=await fetch("d.bin",{cache:"no-cache"});const p=JSON.parse(new TextDecoder().decode(await window.__decrypt(await r.arrayBuffer())));
+    const r=await fetch("d.bin",{cache:"no-cache"});const ver=r.headers.get("etag")||r.headers.get("last-modified");
+    // если сайт обновился, пока вкладка была открыта, — перезагрузить при возвращении на вкладку
+    const chk=async()=>{if(document.hidden||!ver)return;try{const h=await fetch("d.bin",{method:"HEAD",cache:"no-cache"});const v=h.headers.get("etag")||h.headers.get("last-modified");if(v&&v!==ver)location.reload()}catch(_){}};
+    document.addEventListener("visibilitychange",chk);setInterval(chk,10*60*1000);const p=JSON.parse(new TextDecoder().decode(await window.__decrypt(await r.arrayBuffer())));
     let lang="ru";try{lang=(JSON.parse(localStorage.getItem("avb.v2")||"{}").lang)||"ru"}catch(_){}
     window.__DATA=lang==="en"?p.en:p.ru;document.documentElement.lang=lang;document.title=p.title;document.getElementById("brand").textContent=p.title;
     const s=document.createElement("script");s.textContent=p.app;document.body.appendChild(s);
