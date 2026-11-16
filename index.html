@@ -89,6 +89,8 @@ h2{font-size:20px;margin:28px 0 12px}
 .player .yt iframe,.player .yt>div{position:absolute;inset:0;width:100%;height:100%;border:0}
 .lock{max-width:440px;margin:12vh auto;padding:28px;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
 .lock h1{margin:0 0 8px;font-size:22px}.lock p{color:var(--mut);margin:0}
+.lang{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:none}.lang button{border:0;background:var(--panel);padding:6px 10px;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--mut)}.lang button+button{border-left:1px solid var(--line)}.lang button.on{background:var(--acc);color:#fff}
+.file.en{margin-top:-2px;border-style:dashed;font-size:13px;color:var(--mut)}
 .tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
 .speed{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .speed button{border:0;background:var(--panel);padding:7px 11px;cursor:pointer;font-size:13px;font-weight:600}
@@ -165,7 +167,8 @@ kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;paddi
     const key=await crypto.subtle.importKey("raw",b64(k),"AES-GCM",false,["decrypt"]);
     window.__decrypt=buf=>crypto.subtle.decrypt({name:"AES-GCM",iv:new Uint8Array(buf,0,12)},key,new Uint8Array(buf,12));
     const r=await fetch("d.bin",{cache:"no-cache"});const p=JSON.parse(new TextDecoder().decode(await window.__decrypt(await r.arrayBuffer())));
-    window.__DATA=p.data;document.title=p.title;document.getElementById("brand").textContent=p.title;
+    let lang="ru";try{lang=(JSON.parse(localStorage.getItem("avb.v2")||"{}").lang)||"ru"}catch(_){}
+    window.__DATA=lang==="en"?p.en:p.ru;document.documentElement.lang=lang;document.title=p.title;document.getElementById("brand").textContent=p.title;
     const s=document.createElement("script");s.textContent=p.app;document.body.appendChild(s);
   }catch(e){try{localStorage.removeItem("avb.key")}catch(_){}lock("Ключ не подошёл. Откройте сайт по своей полной ссылке ещё раз.")}
 })();
